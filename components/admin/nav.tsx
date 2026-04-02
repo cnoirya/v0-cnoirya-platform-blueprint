@@ -15,7 +15,11 @@ import {
   FileText,
   Target,
   ShoppingBag,
-  Hexagon
+  Hexagon,
+  Calendar,
+  BarChart3,
+  List,
+  Zap
 } from 'lucide-react'
 
 const navItems = [
@@ -23,12 +27,16 @@ const navItems = [
   { href: '/admin/content', label: 'Content', icon: ImageIcon },
   { href: '/admin/subscribers', label: 'Subscribers', icon: Users },
   { href: '/admin/earnings', label: 'Earnings', icon: DollarSign },
+  { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/admin/messages', label: 'Messages', icon: MessageCircle },
   { href: '/admin/calls', label: 'Calls', icon: Phone },
   { href: '/admin/custom', label: 'Custom Orders', icon: FileText },
   { href: '/admin/shop', label: 'Shop', icon: ShoppingBag },
   { href: '/admin/fundraise', label: 'Fundraise', icon: Target },
   { href: '/admin/nft', label: 'NFTs', icon: Hexagon },
+  { href: '/admin/events', label: 'Events', icon: Calendar },
+  { href: '/admin/lists', label: 'Lists', icon: List },
+  { href: '/admin/automation', label: 'Automation', icon: Zap },
   { href: '/admin/live', label: 'Go Live', icon: Video },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ]

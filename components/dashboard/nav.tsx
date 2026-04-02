@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Grid, MessageCircle, Video, User, Settings, LogOut, Phone, Wallet, ShoppingBag, Hexagon, FileText, Target, Heart, Bell, Calendar, Users } from 'lucide-react'
+import { Home, Grid, MessageCircle, Video, User, Settings, LogOut, Phone, Wallet, ShoppingBag, Hexagon, FileText, Target, Heart, Bell, Calendar, Users, Trophy, Megaphone, Ticket, Hash, FolderOpen, BarChart3, Eye } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,6 +30,15 @@ const moreItems = [
   { href: '/dashboard/schedule', label: 'Schedule', icon: Calendar },
   { href: '/dashboard/referrals', label: 'Referrals', icon: Users },
   { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
+  { href: '/dashboard/stories', label: 'Stories', icon: Eye },
+  { href: '/dashboard/polls', label: 'Polls', icon: BarChart3 },
+  { href: '/dashboard/vault', label: 'Vault', icon: FolderOpen },
+  { href: '/dashboard/collections', label: 'Collections', icon: Grid },
+  { href: '/dashboard/likes', label: 'Likes', icon: Heart },
+  { href: '/dashboard/channels', label: 'Channels', icon: Hash },
+  { href: '/dashboard/events', label: 'Events', icon: Ticket },
+  { href: '/dashboard/announcements', label: 'News', icon: Megaphone },
+  { href: '/dashboard/leaderboard', label: 'Leaderboard', icon: Trophy },
 ]
 
 export function DashboardNav() {
