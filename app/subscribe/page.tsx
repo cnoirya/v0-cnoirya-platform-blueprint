@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Check, ArrowLeft, Copy, CheckCircle, ExternalLink } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 
 const tiers = [
   {
@@ -58,28 +57,31 @@ function SubscribeContent() {
     setIsLoading(true)
     setError('')
 
-    const supabase = createClient()
-    
-    const { error: signUpError } = await supabase.auth.signUp({
-      email: formData.email,
-      password: formData.password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
-        data: {
-          username: formData.username,
-          tier: selectedTier,
-        },
-      },
-    })
+    try {
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          tier: selectedTier
+        })
+      })
 
-    if (signUpError) {
-      setError(signUpError.message)
-      setIsLoading(false)
-      return
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error || 'Signup failed')
+        setIsLoading(false)
+        return
+      }
+
+      setSignUpSuccess(true)
+      setStep(3)
+    } catch {
+      setError('An error occurred. Please try again.')
     }
-
-    setSignUpSuccess(true)
-    setStep(3)
+    
     setIsLoading(false)
   }
 

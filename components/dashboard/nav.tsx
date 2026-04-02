@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { Home, Grid, MessageCircle, Video, User, Settings, LogOut, Phone, Wallet, ShoppingBag, Hexagon, FileText, Target, Heart, Bell, Calendar, Users, Trophy, Megaphone, Ticket, Hash, FolderOpen, BarChart3, Eye } from 'lucide-react'
 import {
   DropdownMenu,
@@ -47,8 +46,7 @@ export function DashboardNav() {
   const router = useRouter()
 
   const handleSignOut = async () => {
-    const supabase = createClient()
-    await supabase.auth.signOut()
+    await fetch('/api/auth/logout', { method: 'POST' })
     router.push('/login')
     router.refresh()
   }

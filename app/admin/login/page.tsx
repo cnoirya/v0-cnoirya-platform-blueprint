@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -21,30 +20,36 @@ export default function AdminLoginPage() {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
-    
-    const { data, error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
 
-    if (signInError) {
-      setError(signInError.message)
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error || 'Login failed')
+        setLoading(false)
+        return
+      }
+
+      // Check if user is admin
+      const isAdmin = data.user?.user_metadata?.is_admin === true
+      if (!isAdmin) {
+        await fetch('/api/auth/logout', { method: 'POST' })
+        setError('Access denied. Admin privileges required.')
+        setLoading(false)
+        return
+      }
+
+      router.push('/admin')
+      router.refresh()
+    } catch {
+      setError('An error occurred. Please try again.')
       setLoading(false)
-      return
     }
-
-    // Check if user is admin
-    const isAdmin = data.user?.user_metadata?.is_admin === true
-    if (!isAdmin) {
-      await supabase.auth.signOut()
-      setError('Access denied. Admin privileges required.')
-      setLoading(false)
-      return
-    }
-
-    router.push('/admin')
-    router.refresh()
   }
 
   return (
