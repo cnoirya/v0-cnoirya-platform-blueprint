@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Check, ArrowLeft } from 'lucide-react'
+import { Check, ArrowLeft, Copy, CheckCircle, ExternalLink } from 'lucide-react'
 
 const tiers = [
   {
@@ -34,6 +34,7 @@ export default function SubscribePage() {
   const [selectedTier, setSelectedTier] = useState(initialTier)
   const [step, setStep] = useState(1)
   const [ageVerified, setAgeVerified] = useState(false)
+  const [copied, setCopied] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -41,6 +42,12 @@ export default function SubscribePage() {
   })
 
   const selectedPlan = tiers.find(t => t.id === selectedTier) || tiers[1]
+
+  const handleCopyAddress = (address: string) => {
+    navigator.clipboard.writeText(address)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
     <main className="min-h-screen bg-background px-6 py-12">
@@ -74,7 +81,7 @@ export default function SubscribePage() {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-bold">{tier.name}</span>
-                    <span className="text-sm">${tier.price}/mo</span>
+                    <span className="text-sm">${tier.price} USDT/mo</span>
                   </div>
                   <ul className="space-y-1">
                     {tier.features.map((feature) => (
@@ -166,35 +173,89 @@ export default function SubscribePage() {
         {step === 3 && (
           <div className="space-y-6">
             <p className="text-xs text-muted-foreground text-center">
-              Complete payment
+              Complete payment with USDT
             </p>
             
-            <div className="border border-border p-4">
-              <div className="flex items-center justify-between mb-4">
+            <div className="border border-foreground p-4">
+              <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-bold">{selectedPlan.name} Plan</span>
-                <span className="text-sm">${selectedPlan.price}/mo</span>
+                <span className="text-sm font-bold">${selectedPlan.price} USDT</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                Billed monthly. Cancel anytime. Discreet billing.
+                Monthly subscription. Cancel anytime.
               </p>
             </div>
 
-            <div className="space-y-3">
-              <Button className="w-full text-sm">
-                Pay with Card
-              </Button>
-              <Button variant="outline" className="w-full text-sm">
-                Pay with Crypto
-              </Button>
+            <div className="border border-border p-4 bg-muted/30">
+              <p className="text-xs text-muted-foreground mb-4">
+                Send exactly <strong>${selectedPlan.price} USDT</strong> to one of the addresses below:
+              </p>
+
+              <div className="space-y-3">
+                {/* TRC20 */}
+                <div className="p-3 bg-background border">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold">USDT (TRC20)</span>
+                    <span className="text-xs text-green-600">Low fees</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <code className="text-xs flex-1 truncate bg-muted p-2">
+                      TJYvPzVXxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    </code>
+                    <button 
+                      onClick={() => handleCopyAddress("TJYvPzVXxxxxxxxxxxxxxxxxxxxxxxxxxx")}
+                      className="p-2 border hover:bg-muted"
+                    >
+                      {copied ? <CheckCircle className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* ERC20 */}
+                <div className="p-3 bg-background border">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold">USDT (ERC20)</span>
+                    <span className="text-xs text-muted-foreground">Ethereum</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <code className="text-xs flex-1 truncate bg-muted p-2">
+                      0x742d35Ccxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    </code>
+                    <button 
+                      onClick={() => handleCopyAddress("0x742d35Ccxxxxxxxxxxxxxxxxxxxxxxxxxx")}
+                      className="p-2 border hover:bg-muted"
+                    >
+                      <Copy className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <div className="p-3 border border-yellow-400 bg-yellow-50 text-yellow-800">
+              <p className="text-xs">
+                <strong>Note:</strong> Your subscription will activate automatically after payment confirmation (typically 1-5 minutes).
+              </p>
+            </div>
+
+            <Button className="w-full text-sm">
+              I&apos;ve Sent Payment
+            </Button>
 
             <Button variant="ghost" onClick={() => setStep(2)} className="w-full text-sm">
               Back
             </Button>
 
-            <p className="text-center text-xs text-muted-foreground">
-              Payments processed securely via CCBill / NowPayments
-            </p>
+            <div className="text-center">
+              <a 
+                href="https://nowpayments.io" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+              >
+                Powered by NOWPayments <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
           </div>
         )}
       </div>

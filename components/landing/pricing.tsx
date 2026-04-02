@@ -6,7 +6,7 @@ const tiers = [
   {
     name: 'Devotee',
     price: '$14.99',
-    period: '/month',
+    period: ' USDT/mo',
     description: 'Entry to the sovereign world',
     features: [
       'Full visual archive access',
@@ -19,7 +19,7 @@ const tiers = [
   {
     name: 'Chosen',
     price: '$29.99',
-    period: '/month',
+    period: ' USDT/mo',
     description: 'Deeper access. Direct connection.',
     features: [
       'Everything in Devotee',
@@ -33,7 +33,7 @@ const tiers = [
   {
     name: 'Inner Circle',
     price: '$99.99',
-    period: '/month',
+    period: ' USDT/mo',
     description: 'The innermost layer. Full sovereignty.',
     features: [
       'Everything in Chosen',
@@ -105,7 +105,7 @@ export function Pricing() {
         </div>
 
         <p className="text-center text-xs text-muted-foreground mt-8">
-          Crypto payments accepted via NowPayments. Fiat via CCBill.
+          USDT payments via NOWPayments. Secure and private.
         </p>
       </div>
     </section>

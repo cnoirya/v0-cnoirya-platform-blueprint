@@ -1,35 +1,48 @@
 "use client"
 
 import { useState } from "react"
-import { CreditCard, Wallet, ArrowUpRight, ArrowDownLeft, Plus, Bitcoin } from "lucide-react"
+import { Wallet, ArrowUpRight, ArrowDownLeft, Plus, Copy, ExternalLink, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
 export default function WalletPage() {
   const [balance, setBalance] = useState(45.00)
   const [topUpAmount, setTopUpAmount] = useState("")
-  const [paymentMethod, setPaymentMethod] = useState<"card" | "crypto">("card")
   const [showTopUp, setShowTopUp] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [paymentInitiated, setPaymentInitiated] = useState(false)
 
-  const presetAmounts = [10, 25, 50, 100, 250, 500]
+  const presetAmounts = [25, 50, 100, 250, 500, 1000]
 
   const transactions = [
-    { type: "topup", description: "Balance Top Up", amount: 50.00, date: "Mar 30, 2026", method: "Visa ****4242" },
+    { type: "topup", description: "USDT Deposit", amount: 50.00, date: "Mar 30, 2026", method: "TRC20" },
     { type: "spend", description: "Video Call - 12:34", amount: -74.88, date: "Mar 28, 2026" },
     { type: "spend", description: "PPV: Behind the Scenes", amount: -15.00, date: "Mar 27, 2026" },
     { type: "spend", description: "Tip", amount: -25.00, date: "Mar 26, 2026" },
     { type: "spend", description: "Audio Call - 8:15", amount: -32.92, date: "Mar 25, 2026" },
-    { type: "topup", description: "Balance Top Up", amount: 100.00, date: "Mar 24, 2026", method: "BTC" },
+    { type: "topup", description: "USDT Deposit", amount: 100.00, date: "Mar 24, 2026", method: "ERC20" },
     { type: "spend", description: "Custom Request Deposit", amount: -50.00, date: "Mar 23, 2026" },
     { type: "spend", description: "Gated DM Unlock", amount: -10.00, date: "Mar 22, 2026" },
   ]
 
-  const handleTopUp = () => {
+  const handleCopyAddress = (address: string) => {
+    navigator.clipboard.writeText(address)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleInitiatePayment = () => {
+    // This would trigger NOWPayments API
+    setPaymentInitiated(true)
+  }
+
+  const handleConfirmPayment = () => {
     const amount = parseFloat(topUpAmount)
     if (amount > 0) {
       setBalance(prev => prev + amount)
       setTopUpAmount("")
       setShowTopUp(false)
+      setPaymentInitiated(false)
     }
   }
 
@@ -44,6 +57,7 @@ export default function WalletPage() {
             <div>
               <p className="text-xs text-neutral-500 uppercase tracking-widest">Available Balance</p>
               <p className="text-4xl font-bold mt-2">${balance.toFixed(2)}</p>
+              <p className="text-xs text-neutral-500 mt-1">USDT equivalent</p>
             </div>
             <Wallet className="w-6 h-6" />
           </div>
@@ -52,150 +66,180 @@ export default function WalletPage() {
             className="w-full bg-black text-white text-xs uppercase tracking-widest"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Add Funds
+            Add USDT
           </Button>
         </div>
 
-        {/* Top Up Form */}
+        {/* Top Up Form - USDT Only */}
         {showTopUp && (
           <div className="border border-black p-6 mb-6">
-            <h2 className="text-xs font-bold uppercase tracking-widest mb-4">Add Funds</h2>
-
-            {/* Amount Presets */}
-            <div className="grid grid-cols-3 gap-2 mb-4">
-              {presetAmounts.map(amount => (
-                <button
-                  key={amount}
-                  onClick={() => setTopUpAmount(amount.toString())}
-                  className={`p-3 border text-sm font-mono ${
-                    topUpAmount === amount.toString() 
-                      ? "bg-black text-white border-black" 
-                      : "border-neutral-300 hover:border-black"
-                  }`}
-                >
-                  ${amount}
-                </button>
-              ))}
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xs font-bold uppercase tracking-widest">Add USDT</h2>
+              <span className="text-xs text-neutral-500">Powered by NOWPayments</span>
             </div>
 
-            {/* Custom Amount */}
-            <div className="mb-4">
-              <label className="text-xs text-neutral-500 uppercase tracking-widest block mb-2">
-                Custom Amount
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500">$</span>
-                <Input
-                  type="number"
-                  value={topUpAmount}
-                  onChange={(e) => setTopUpAmount(e.target.value)}
-                  placeholder="0.00"
-                  className="pl-7 border-black"
-                  min="1"
-                />
-              </div>
-            </div>
+            {!paymentInitiated ? (
+              <>
+                {/* Amount Presets */}
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  {presetAmounts.map(amount => (
+                    <button
+                      key={amount}
+                      onClick={() => setTopUpAmount(amount.toString())}
+                      className={`p-3 border text-sm ${
+                        topUpAmount === amount.toString() 
+                          ? "bg-black text-white border-black" 
+                          : "border-neutral-300 hover:border-black"
+                      }`}
+                    >
+                      ${amount}
+                    </button>
+                  ))}
+                </div>
 
-            {/* Payment Method */}
-            <div className="mb-6">
-              <label className="text-xs text-neutral-500 uppercase tracking-widest block mb-2">
-                Payment Method
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => setPaymentMethod("card")}
-                  className={`p-4 border flex items-center gap-3 ${
-                    paymentMethod === "card" 
-                      ? "bg-black text-white border-black" 
-                      : "border-neutral-300 hover:border-black"
-                  }`}
-                >
-                  <CreditCard className="w-5 h-5" />
-                  <div className="text-left">
-                    <p className="text-xs font-bold">Card</p>
-                    <p className="text-xs opacity-70">Visa, MC, Amex</p>
-                  </div>
-                </button>
-                <button
-                  onClick={() => setPaymentMethod("crypto")}
-                  className={`p-4 border flex items-center gap-3 ${
-                    paymentMethod === "crypto" 
-                      ? "bg-black text-white border-black" 
-                      : "border-neutral-300 hover:border-black"
-                  }`}
-                >
-                  <Bitcoin className="w-5 h-5" />
-                  <div className="text-left">
-                    <p className="text-xs font-bold">Crypto</p>
-                    <p className="text-xs opacity-70">BTC, ETH, SOL</p>
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            {paymentMethod === "card" && (
-              <div className="space-y-4 mb-6">
-                <div>
+                {/* Custom Amount */}
+                <div className="mb-6">
                   <label className="text-xs text-neutral-500 uppercase tracking-widest block mb-2">
-                    Card Number
+                    Custom Amount (USDT)
                   </label>
-                  <Input placeholder="4242 4242 4242 4242" className="border-black font-mono" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs text-neutral-500 uppercase tracking-widest block mb-2">
-                      Expiry
-                    </label>
-                    <Input placeholder="MM/YY" className="border-black font-mono" />
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500">$</span>
+                    <Input
+                      type="number"
+                      value={topUpAmount}
+                      onChange={(e) => setTopUpAmount(e.target.value)}
+                      placeholder="0.00"
+                      className="pl-7 border-black"
+                      min="10"
+                    />
                   </div>
-                  <div>
-                    <label className="text-xs text-neutral-500 uppercase tracking-widest block mb-2">
-                      CVC
-                    </label>
-                    <Input placeholder="123" className="border-black font-mono" />
-                  </div>
+                  <p className="text-xs text-neutral-500 mt-2">Minimum deposit: $10 USDT</p>
                 </div>
-              </div>
-            )}
 
-            {paymentMethod === "crypto" && (
-              <div className="mb-6 p-4 bg-neutral-50 border border-neutral-200">
-                <p className="text-xs text-neutral-600 mb-3">
-                  Send payment to the following address. Your balance will update after 1 confirmation.
-                </p>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between p-2 bg-white border">
-                    <span className="text-xs font-bold">BTC</span>
-                    <code className="text-xs">bc1qxy2kgdygjrsqtzq2n0yrf...</code>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setShowTopUp(false)}
+                    className="flex-1 border-black text-xs uppercase tracking-widest"
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleInitiatePayment}
+                    disabled={!topUpAmount || parseFloat(topUpAmount) < 10}
+                    className="flex-1 bg-black text-white text-xs uppercase tracking-widest"
+                  >
+                    Continue
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Payment Details */}
+                <div className="mb-6 p-4 bg-neutral-50 border border-neutral-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-bold">Amount to Send</span>
+                    <span className="text-lg font-bold">{topUpAmount} USDT</span>
                   </div>
-                  <div className="flex items-center justify-between p-2 bg-white border">
-                    <span className="text-xs font-bold">ETH</span>
-                    <code className="text-xs">0x742d35Cc6634C0532925a3b...</code>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-white border">
-                    <span className="text-xs font-bold">SOL</span>
-                    <code className="text-xs">7EcDhSYGxXyscszYEp35KHN8...</code>
+                  
+                  <p className="text-xs text-neutral-600 mb-4">
+                    Send exactly {topUpAmount} USDT to one of the addresses below. Your balance will update automatically after confirmation.
+                  </p>
+
+                  <div className="space-y-3">
+                    {/* TRC20 */}
+                    <div className="p-3 bg-white border">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-bold">USDT (TRC20)</span>
+                        <span className="text-xs text-green-600">Recommended - Low fees</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <code className="text-xs flex-1 truncate bg-neutral-100 p-2">
+                          TJYvPzVXxxxxxxxxxxxxxxxxxxxxxxxxxx
+                        </code>
+                        <button 
+                          onClick={() => handleCopyAddress("TJYvPzVXxxxxxxxxxxxxxxxxxxxxxxxxxx")}
+                          className="p-2 border hover:bg-neutral-100"
+                        >
+                          {copied ? <CheckCircle className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* ERC20 */}
+                    <div className="p-3 bg-white border">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-bold">USDT (ERC20)</span>
+                        <span className="text-xs text-neutral-500">Ethereum network</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <code className="text-xs flex-1 truncate bg-neutral-100 p-2">
+                          0x742d35Ccxxxxxxxxxxxxxxxxxxxxxxxxxx
+                        </code>
+                        <button 
+                          onClick={() => handleCopyAddress("0x742d35Ccxxxxxxxxxxxxxxxxxxxxxxxxxx")}
+                          className="p-2 border hover:bg-neutral-100"
+                        >
+                          <Copy className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* BEP20 */}
+                    <div className="p-3 bg-white border">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-bold">USDT (BEP20)</span>
+                        <span className="text-xs text-neutral-500">BNB Smart Chain</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <code className="text-xs flex-1 truncate bg-neutral-100 p-2">
+                          0x8B3aEcxxxxxxxxxxxxxxxxxxxxxxxxxx
+                        </code>
+                        <button 
+                          onClick={() => handleCopyAddress("0x8B3aEcxxxxxxxxxxxxxxxxxxxxxxxxxx")}
+                          className="p-2 border hover:bg-neutral-100"
+                        >
+                          <Copy className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
 
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                onClick={() => setShowTopUp(false)}
-                className="flex-1 border-black text-xs uppercase tracking-widest"
-              >
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleTopUp}
-                disabled={!topUpAmount || parseFloat(topUpAmount) <= 0}
-                className="flex-1 bg-black text-white text-xs uppercase tracking-widest"
-              >
-                {paymentMethod === "card" ? "Pay" : "I&apos;ve Sent Payment"}
-              </Button>
-            </div>
+                <div className="p-4 border border-yellow-300 bg-yellow-50 mb-6">
+                  <p className="text-xs text-yellow-800">
+                    <strong>Important:</strong> Send only USDT to these addresses. Sending other tokens will result in permanent loss.
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setPaymentInitiated(false)}
+                    className="flex-1 border-black text-xs uppercase tracking-widest"
+                  >
+                    Back
+                  </Button>
+                  <Button 
+                    onClick={handleConfirmPayment}
+                    className="flex-1 bg-black text-white text-xs uppercase tracking-widest"
+                  >
+                    I&apos;ve Sent Payment
+                  </Button>
+                </div>
+
+                <div className="mt-4 text-center">
+                  <a 
+                    href="https://nowpayments.io" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-xs text-neutral-500 hover:text-black inline-flex items-center gap-1"
+                  >
+                    Powered by NOWPayments <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -239,10 +283,10 @@ export default function WalletPage() {
                     <p className="text-xs text-neutral-500">{tx.date} {tx.method && `• ${tx.method}`}</p>
                   </div>
                 </div>
-                <p className={`text-sm font-mono font-bold ${
+                <p className={`text-sm font-bold ${
                   tx.amount > 0 ? "text-black" : "text-neutral-500"
                 }`}>
-                  {tx.amount > 0 ? "+" : ""}{tx.amount.toFixed(2)}
+                  {tx.amount > 0 ? "+" : ""}{tx.amount.toFixed(2)} USDT
                 </p>
               </div>
             ))}

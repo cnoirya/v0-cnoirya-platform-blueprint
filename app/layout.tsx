@@ -1,12 +1,11 @@
 import type { Metadata } from 'next'
-import { Space_Mono } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const spaceMono = Space_Mono({ 
-  weight: ['400', '700'],
+const inter = Inter({ 
   subsets: ["latin"],
-  variable: '--font-space-mono'
+  variable: '--font-inter'
 })
 
 export const metadata: Metadata = {
@@ -39,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${spaceMono.variable} font-mono antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased`}>
         {children}
         <Analytics />
       </body>
