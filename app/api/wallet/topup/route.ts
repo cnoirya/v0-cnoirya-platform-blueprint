@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { createPayment } from '@/lib/nowpayments'
+import { getNOWPaymentsClient } from '@/lib/nowpayments'
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Create NOWPayments invoice
-    const payment = await createPayment({
+    const client = getNOWPaymentsClient()
+    const payment = await client.createPayment({
       price_amount: amount,
       price_currency: 'usd',
       pay_currency: network === 'trc20' ? 'usdttrc20' : network === 'bep20' ? 'usdtbsc' : 'usdterc20',
