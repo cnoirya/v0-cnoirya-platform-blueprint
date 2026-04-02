@@ -1,62 +1,99 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createUSDTPayment } from '@/lib/nowpayments'
+import { createClient } from '@/lib/supabase/server'
 
 /**
  * Create a new USDT payment via NOWPayments
  * 
  * POST /api/payments/create
- * Body: { amount: number, type: 'subscription' | 'topup', tierId?: string, network?: 'TRC20' | 'ERC20' | 'BEP20' }
+ * Body: { amount: number, type: 'subscription' | 'wallet_topup' | 'ppv', tierId?: string }
  */
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
     const body = await request.json()
-    const { amount, type, tierId, network = 'TRC20' } = body
+    const { amount, type, tierId, contentId } = body
 
     // Validate input
-    if (!amount || amount < 10) {
+    if (!amount || amount < 1) {
       return NextResponse.json(
-        { error: 'Minimum amount is $10 USDT' },
+        { error: 'Invalid amount' },
         { status: 400 }
       )
     }
 
-    if (!['subscription', 'topup'].includes(type)) {
+    if (!['subscription', 'wallet_topup', 'ppv', 'tip', 'custom_order'].includes(type)) {
       return NextResponse.json(
         { error: 'Invalid payment type' },
         { status: 400 }
       )
     }
 
-    // TODO: Get actual user ID from session/auth
-    const userId = 'demo_user'
-
     // Generate order ID
-    const orderId = type === 'subscription' 
-      ? `subscription_${userId}_${tierId}_${Date.now()}`
-      : `topup_${userId}_${amount}_${Date.now()}`
+    const orderId = `${type}_${user.id}_${Date.now()}`
 
-    // Generate description
-    const description = type === 'subscription'
-      ? `CNOIRYA ${tierId} Subscription`
-      : `CNOIRYA Wallet Top-up: $${amount}`
+    // Generate description based on type
+    let description = 'CNOIRYA Payment'
+    switch (type) {
+      case 'subscription':
+        description = `CNOIRYA ${tierId || 'Chosen'} Tier Subscription`
+        break
+      case 'wallet_topup':
+        description = `CNOIRYA Wallet Top-up: $${amount} USDT`
+        break
+      case 'ppv':
+        description = `CNOIRYA Content Unlock`
+        break
+      case 'tip':
+        description = `CNOIRYA Tip: $${amount}`
+        break
+      case 'custom_order':
+        description = `CNOIRYA Custom Order`
+        break
+    }
 
     // Create payment with NOWPayments
     const payment = await createUSDTPayment(
       amount,
       orderId,
       description,
-      network
+      'TRC20' // Default to TRC20 for lower fees
     )
+
+    // Store payment record in database
+    await supabase.from('payments').insert({
+      user_id: user.id,
+      payment_id: payment.payment_id,
+      amount,
+      currency: 'USDT',
+      status: 'pending',
+      payment_type: type,
+      metadata: {
+        tier_id: tierId,
+        content_id: contentId,
+        pay_address: payment.pay_address,
+        pay_amount: payment.pay_amount
+      }
+    })
 
     return NextResponse.json({
       success: true,
       payment: {
-        id: payment.payment_id,
-        address: payment.pay_address,
-        amount: payment.pay_amount,
-        currency: payment.pay_currency,
-        expiresAt: payment.expiration_estimate_date,
+        payment_id: payment.payment_id,
+        pay_address: payment.pay_address,
+        pay_amount: payment.pay_amount,
+        pay_currency: payment.pay_currency,
+        expires_at: payment.expiration_estimate_date,
       }
     })
   } catch (error) {

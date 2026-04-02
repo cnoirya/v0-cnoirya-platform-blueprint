@@ -73,23 +73,31 @@ export async function POST(request: NextRequest) {
       amount: data.actually_paid,
     })
 
-    // Update payment record status
+    // Find payment record by payment_id
+    const { data: payment } = await supabaseAdmin
+      .from('payments')
+      .select('*')
+      .eq('payment_id', data.payment_id.toString())
+      .single()
+
+    if (!payment) {
+      console.error('[NOWPayments] Payment not found:', data.payment_id)
+      return NextResponse.json({ error: 'Payment not found' }, { status: 404 })
+    }
+
+    // Update payment status
+    const newStatus = data.payment_status === 'finished' ? 'completed' : data.payment_status
     await supabaseAdmin
       .from('payments')
       .update({ 
-        status: data.payment_status === 'finished' ? 'completed' : data.payment_status,
+        status: newStatus,
         updated_at: new Date().toISOString()
       })
-      .eq('nowpayments_id', data.payment_id.toString())
+      .eq('payment_id', data.payment_id.toString())
 
     // Handle successful payments
     if (data.payment_status === 'finished') {
-      await handleSuccessfulPayment(data)
-    }
-
-    // Handle wallet top-ups
-    if (data.payment_status === 'finished' && data.order_id.startsWith('wallet_')) {
-      await handleWalletTopup(data)
+      await handleSuccessfulPayment(payment, data)
     }
 
     return NextResponse.json({ success: true })
@@ -99,87 +107,133 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function handleSuccessfulPayment(data: IPNPayload) {
-  const parts = data.order_id.split('_')
-  const type = parts[0]
+async function handleSuccessfulPayment(payment: any, data: IPNPayload) {
+  const { user_id, payment_type, amount, metadata } = payment
 
-  if (type === 'sub') {
-    // Subscription payment: sub_userId_tier
-    const userId = parts[1]
-    const tier = parts[2]
-
-    // Create/update subscription
-    const startDate = new Date()
-    const endDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
-
-    await supabaseAdmin
-      .from('subscriptions')
-      .upsert({
-        user_id: userId,
-        tier: tier,
-        status: 'active',
-        current_period_start: startDate.toISOString(),
-        current_period_end: endDate.toISOString(),
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'user_id'
-      })
-
-    // Update payment record
-    await supabaseAdmin
-      .from('payments')
-      .update({ 
-        status: 'completed',
-        updated_at: new Date().toISOString()
-      })
-      .eq('nowpayments_id', data.payment_id.toString())
-
-    console.log(`[NOWPayments] Activated ${tier} subscription for user ${userId}`)
+  switch (payment_type) {
+    case 'subscription':
+      await handleSubscription(user_id, metadata?.tier_id || 'chosen', amount)
+      break
+    case 'wallet_topup':
+      await handleWalletTopup(user_id, amount)
+      break
+    case 'ppv':
+      await handlePPVPurchase(user_id, metadata?.content_id, amount)
+      break
+    case 'tip':
+      await handleTip(user_id, amount)
+      break
+    default:
+      console.log(`[NOWPayments] Unknown payment type: ${payment_type}`)
   }
 }
 
-async function handleWalletTopup(data: IPNPayload) {
-  const parts = data.order_id.split('_')
-  // wallet_userId_timestamp
-  const userId = parts[1]
+async function handleSubscription(userId: string, tier: string, amount: number) {
+  const startDate = new Date()
+  const endDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
 
-  // Get the transaction to find amount
-  const { data: transaction } = await supabaseAdmin
-    .from('wallet_transactions')
-    .select('amount')
-    .eq('nowpayments_id', data.payment_id.toString())
+  // Check if subscription exists
+  const { data: existing } = await supabaseAdmin
+    .from('subscriptions')
+    .select('id')
+    .eq('user_id', userId)
     .single()
 
-  if (transaction) {
-    // Update transaction status
+  if (existing) {
+    // Update existing
     await supabaseAdmin
-      .from('wallet_transactions')
-      .update({ 
-        status: 'completed',
-        updated_at: new Date().toISOString()
+      .from('subscriptions')
+      .update({
+        tier: tier,
+        status: 'active',
+        started_at: startDate.toISOString(),
+        expires_at: endDate.toISOString(),
+        amount: amount,
+        currency: 'USDT'
       })
-      .eq('nowpayments_id', data.payment_id.toString())
-
-    // Update user balance in profile
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('balance')
-      .eq('id', userId)
-      .single()
-
-    const currentBalance = profile?.balance || 0
-    const newBalance = currentBalance + transaction.amount
-
+      .eq('user_id', userId)
+  } else {
+    // Insert new
     await supabaseAdmin
-      .from('profiles')
-      .update({ 
-        balance: newBalance,
-        updated_at: new Date().toISOString()
+      .from('subscriptions')
+      .insert({
+        user_id: userId,
+        tier: tier,
+        status: 'active',
+        started_at: startDate.toISOString(),
+        expires_at: endDate.toISOString(),
+        amount: amount,
+        currency: 'USDT'
       })
-      .eq('id', userId)
-
-    console.log(`[NOWPayments] Added $${transaction.amount} to wallet for user ${userId}. New balance: $${newBalance}`)
   }
+
+  // Update profile tier
+  await supabaseAdmin
+    .from('profiles')
+    .update({ tier: tier })
+    .eq('id', userId)
+
+  console.log(`[NOWPayments] Activated ${tier} subscription for user ${userId}`)
+}
+
+async function handleWalletTopup(userId: string, amount: number) {
+  // Create wallet transaction
+  await supabaseAdmin
+    .from('wallet_transactions')
+    .insert({
+      user_id: userId,
+      amount: amount,
+      type: 'topup',
+      description: `USDT Deposit: $${amount}`
+    })
+
+  // Update user balance
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('balance')
+    .eq('id', userId)
+    .single()
+
+  const currentBalance = profile?.balance || 0
+  const newBalance = currentBalance + amount
+
+  await supabaseAdmin
+    .from('profiles')
+    .update({ 
+      balance: newBalance,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', userId)
+
+  console.log(`[NOWPayments] Added $${amount} to wallet for user ${userId}. New balance: $${newBalance}`)
+}
+
+async function handlePPVPurchase(userId: string, contentId: string, amount: number) {
+  if (!contentId) return
+
+  await supabaseAdmin
+    .from('ppv_purchases')
+    .insert({
+      user_id: userId,
+      content_id: contentId,
+      amount: amount
+    })
+
+  console.log(`[NOWPayments] PPV purchase for user ${userId}, content ${contentId}`)
+}
+
+async function handleTip(userId: string, amount: number) {
+  // Record tip in wallet transactions as a spend
+  await supabaseAdmin
+    .from('wallet_transactions')
+    .insert({
+      user_id: userId,
+      amount: -amount,
+      type: 'spend',
+      description: `Tip: $${amount}`
+    })
+
+  console.log(`[NOWPayments] Tip of $${amount} from user ${userId}`)
 }
 
 export async function GET() {
