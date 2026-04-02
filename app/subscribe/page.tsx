@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -28,7 +28,7 @@ const tiers = [
   }
 ]
 
-export default function SubscribePage() {
+function SubscribeContent() {
   const searchParams = useSearchParams()
   const initialTier = searchParams.get('tier') || 'chosen'
   const [selectedTier, setSelectedTier] = useState(initialTier)
@@ -260,5 +260,19 @@ export default function SubscribePage() {
         )}
       </div>
     </main>
+  )
+}
+
+export default function SubscribePage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-background px-6 py-12">
+        <div className="max-w-lg mx-auto text-center">
+          <p className="text-xs text-muted-foreground">Loading...</p>
+        </div>
+      </main>
+    }>
+      <SubscribeContent />
+    </Suspense>
   )
 }
