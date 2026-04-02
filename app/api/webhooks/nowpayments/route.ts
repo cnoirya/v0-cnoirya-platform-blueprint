@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
+import { createClient } from '@supabase/supabase-js'
 
 /**
  * NOWPayments IPN (Instant Payment Notification) Webhook Handler
- * 
- * This endpoint receives payment status updates from NOWPayments.
- * Configure this URL in your NOWPayments dashboard under IPN settings.
- * 
- * Webhook URL: https://yourdomain.com/api/webhooks/nowpayments
+ * Uses service role key to bypass RLS for webhook processing
  */
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 interface IPNPayload {
   payment_id: number
@@ -35,7 +37,6 @@ function verifyIPNSignature(payload: string, signature: string | null): boolean 
     return false
   }
 
-  // Sort payload keys and create signature
   const sortedPayload = JSON.stringify(
     Object.keys(JSON.parse(payload))
       .sort()
@@ -72,57 +73,23 @@ export async function POST(request: NextRequest) {
       amount: data.actually_paid,
     })
 
-    // Handle different payment statuses
-    switch (data.payment_status) {
-      case 'waiting':
-        // Payment created, waiting for funds
-        console.log(`[NOWPayments] Payment ${data.payment_id} waiting for funds`)
-        break
+    // Update payment record status
+    await supabaseAdmin
+      .from('payments')
+      .update({ 
+        status: data.payment_status === 'finished' ? 'completed' : data.payment_status,
+        updated_at: new Date().toISOString()
+      })
+      .eq('nowpayments_id', data.payment_id.toString())
 
-      case 'confirming':
-        // Payment received, waiting for confirmations
-        console.log(`[NOWPayments] Payment ${data.payment_id} confirming`)
-        break
+    // Handle successful payments
+    if (data.payment_status === 'finished') {
+      await handleSuccessfulPayment(data)
+    }
 
-      case 'confirmed':
-        // Payment confirmed on blockchain
-        console.log(`[NOWPayments] Payment ${data.payment_id} confirmed`)
-        break
-
-      case 'sending':
-        // Funds being sent to your wallet
-        console.log(`[NOWPayments] Payment ${data.payment_id} sending to wallet`)
-        break
-
-      case 'finished':
-        // Payment complete - activate subscription/add balance
-        console.log(`[NOWPayments] Payment ${data.payment_id} finished!`)
-        await handleSuccessfulPayment(data)
-        break
-
-      case 'partially_paid':
-        // User sent less than required
-        console.log(`[NOWPayments] Payment ${data.payment_id} partially paid: ${data.actually_paid}/${data.pay_amount}`)
-        break
-
-      case 'failed':
-        // Payment failed
-        console.log(`[NOWPayments] Payment ${data.payment_id} failed`)
-        await handleFailedPayment(data)
-        break
-
-      case 'refunded':
-        // Payment refunded
-        console.log(`[NOWPayments] Payment ${data.payment_id} refunded`)
-        break
-
-      case 'expired':
-        // Payment expired
-        console.log(`[NOWPayments] Payment ${data.payment_id} expired`)
-        break
-
-      default:
-        console.log(`[NOWPayments] Unknown status: ${data.payment_status}`)
+    // Handle wallet top-ups
+    if (data.payment_status === 'finished' && data.order_id.startsWith('wallet_')) {
+      await handleWalletTopup(data)
     }
 
     return NextResponse.json({ success: true })
@@ -133,60 +100,88 @@ export async function POST(request: NextRequest) {
 }
 
 async function handleSuccessfulPayment(data: IPNPayload) {
-  // Parse order_id to determine payment type
-  // Format: "subscription_userId_tierId" or "topup_userId_amount"
   const parts = data.order_id.split('_')
   const type = parts[0]
-  const userId = parts[1]
 
-  if (type === 'subscription') {
-    const tierId = parts[2]
-    // TODO: Activate subscription in database
-    console.log(`[NOWPayments] Activating subscription for user ${userId}, tier ${tierId}`)
-    
-    // Example database call:
-    // await db.subscriptions.create({
-    //   userId,
-    //   tierId,
-    //   paymentId: data.payment_id.toString(),
-    //   amount: data.price_amount,
-    //   status: 'active',
-    //   startDate: new Date(),
-    //   endDate: addMonths(new Date(), 1),
-    // })
-  } else if (type === 'topup') {
-    const amount = parseFloat(parts[2])
-    // TODO: Add balance to user's wallet
-    console.log(`[NOWPayments] Adding $${amount} to user ${userId}'s wallet`)
-    
-    // Example database call:
-    // await db.users.update({
-    //   where: { id: userId },
-    //   data: { balance: { increment: amount } }
-    // })
-    // 
-    // await db.transactions.create({
-    //   userId,
-    //   type: 'topup',
-    //   amount,
-    //   paymentId: data.payment_id.toString(),
-    //   status: 'completed',
-    // })
+  if (type === 'sub') {
+    // Subscription payment: sub_userId_tier
+    const userId = parts[1]
+    const tier = parts[2]
+
+    // Create/update subscription
+    const startDate = new Date()
+    const endDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+
+    await supabaseAdmin
+      .from('subscriptions')
+      .upsert({
+        user_id: userId,
+        tier: tier,
+        status: 'active',
+        current_period_start: startDate.toISOString(),
+        current_period_end: endDate.toISOString(),
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'user_id'
+      })
+
+    // Update payment record
+    await supabaseAdmin
+      .from('payments')
+      .update({ 
+        status: 'completed',
+        updated_at: new Date().toISOString()
+      })
+      .eq('nowpayments_id', data.payment_id.toString())
+
+    console.log(`[NOWPayments] Activated ${tier} subscription for user ${userId}`)
   }
 }
 
-async function handleFailedPayment(data: IPNPayload) {
-  // Log failed payment for monitoring
-  console.log(`[NOWPayments] Recording failed payment: ${data.order_id}`)
-  
-  // TODO: Update payment record as failed
-  // await db.payments.update({
-  //   where: { orderId: data.order_id },
-  //   data: { status: 'failed' }
-  // })
+async function handleWalletTopup(data: IPNPayload) {
+  const parts = data.order_id.split('_')
+  // wallet_userId_timestamp
+  const userId = parts[1]
+
+  // Get the transaction to find amount
+  const { data: transaction } = await supabaseAdmin
+    .from('wallet_transactions')
+    .select('amount')
+    .eq('nowpayments_id', data.payment_id.toString())
+    .single()
+
+  if (transaction) {
+    // Update transaction status
+    await supabaseAdmin
+      .from('wallet_transactions')
+      .update({ 
+        status: 'completed',
+        updated_at: new Date().toISOString()
+      })
+      .eq('nowpayments_id', data.payment_id.toString())
+
+    // Update user balance in profile
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('balance')
+      .eq('id', userId)
+      .single()
+
+    const currentBalance = profile?.balance || 0
+    const newBalance = currentBalance + transaction.amount
+
+    await supabaseAdmin
+      .from('profiles')
+      .update({ 
+        balance: newBalance,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', userId)
+
+    console.log(`[NOWPayments] Added $${transaction.amount} to wallet for user ${userId}. New balance: $${newBalance}`)
+  }
 }
 
-// GET endpoint for testing
 export async function GET() {
   return NextResponse.json({ 
     message: 'NOWPayments webhook endpoint',
