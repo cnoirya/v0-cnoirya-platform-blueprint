@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 export default function AdminSettingsPage() {
   const [profile, setProfile] = useState({
     displayName: 'CNOIRYA',
-    bio: 'Premium adult content creator. Exclusive behind the scenes, photosets, videos, and more.',
+    bio: 'A sovereign archetype. Dark feminine empire. Patron-supported artistic expression.',
     website: 'https://cnoirya.com',
     twitter: '@cnoirya'
   })

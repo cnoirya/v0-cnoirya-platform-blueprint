@@ -57,12 +57,12 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
 
           <div className="border border-black p-6 mb-6">
             <p className="text-xs mb-4">
-              This website contains age-restricted content. By entering, you confirm that you are at least 18 years old and agree to our Terms of Service.
+              This is a sovereign space. By entering, you confirm you meet the age requirements and accept our Terms of Service.
             </p>
             <div className="text-xs text-neutral-500 space-y-1">
-              <p>- Adult content (18+)</p>
-              <p>- Explicit material</p>
-              <p>- Identity verification may be required</p>
+              <p>- Premium patron-only content</p>
+              <p>- Dark feminine artistic expression</p>
+              <p>- Verification required for access</p>
             </div>
           </div>
 
@@ -78,12 +78,12 @@ export function AgeGate({ children }: { children: React.ReactNode }) {
               onClick={handleVerify}
               className="flex-1 bg-black text-white text-xs uppercase tracking-widest"
             >
-              I am 18+
+              Enter
             </Button>
           </div>
 
           <p className="text-xs text-neutral-400 mt-6">
-            By clicking &quot;I am 18+&quot; you agree to our{" "}
+            By entering you agree to our{" "}
             <a href="/terms" className="underline">Terms</a> and{" "}
             <a href="/privacy" className="underline">Privacy Policy</a>
           </p>

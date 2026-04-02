@@ -11,7 +11,7 @@ const spaceMono = Space_Mono({
 
 export const metadata: Metadata = {
   title: 'CNOIRYA | Exclusive Membership',
-  description: 'Premium adult content platform. 18+ only.',
+  description: 'A sovereign archetype. Dark feminine empire. Exclusive access to the inner world.',
   generator: 'v0.app',
   icons: {
     icon: [

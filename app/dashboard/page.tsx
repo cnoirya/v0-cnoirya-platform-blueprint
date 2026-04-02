@@ -6,8 +6,8 @@ const feedItems = [
     id: '1',
     type: 'photo' as const,
     thumbnail: null,
-    title: 'New photoset just dropped',
-    description: 'Exclusive behind the scenes from the latest shoot. 24 HD photos inside.',
+    title: 'New visual series released',
+    description: 'Behind the veil. 24 frames from the latest artistic session.',
     likes: 847,
     comments: 52,
     timestamp: '2 hours ago',
@@ -17,8 +17,8 @@ const feedItems = [
     id: '2',
     type: 'video' as const,
     thumbnail: null,
-    title: 'Full video release',
-    description: 'The complete 12 minute video you have been waiting for.',
+    title: 'Full transmission unlocked',
+    description: 'The complete 12 minute visual journey.',
     likes: 1243,
     comments: 98,
     timestamp: '1 day ago',
@@ -29,8 +29,8 @@ const feedItems = [
     id: '3',
     type: 'ppv' as const,
     thumbnail: null,
-    title: 'PPV Special Content',
-    description: 'Unlock this exclusive content for Premium and VIP members only.',
+    title: 'Vault Access',
+    description: 'Unlock this rare archive. Chosen and Inner Circle only.',
     likes: 432,
     comments: 21,
     timestamp: '3 days ago',
@@ -41,8 +41,8 @@ const feedItems = [
     id: '4',
     type: 'photo' as const,
     thumbnail: null,
-    title: 'Weekly photo update',
-    description: 'Fresh content from this week. Shot in natural light.',
+    title: 'Weekly release',
+    description: 'New frames from this week. Natural light series.',
     likes: 621,
     comments: 34,
     timestamp: '5 days ago',
@@ -81,8 +81,8 @@ export default function DashboardPage() {
             <h3 className="text-xs font-bold mb-3">Quick Stats</h3>
             <div className="space-y-2 text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Your Plan</span>
-                <span>Premium</span>
+                <span className="text-muted-foreground">Your Layer</span>
+                <span>Chosen</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Member Since</span>
@@ -103,7 +103,7 @@ export default function DashboardPage() {
                   <span>04</span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-xs font-bold">Live Stream</p>
+                  <p className="text-xs font-bold">Live Transmission</p>
                   <p className="text-[10px] text-muted-foreground">Friday 8PM EST</p>
                 </div>
               </div>
@@ -112,7 +112,7 @@ export default function DashboardPage() {
                   <span>07</span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-xs font-bold">New Video Drop</p>
+                  <p className="text-xs font-bold">New Release</p>
                   <p className="text-[10px] text-muted-foreground">Monday</p>
                 </div>
               </div>

@@ -3,33 +3,33 @@ import { Lock, MessageCircle, Video, Crown, Gift, Zap } from 'lucide-react'
 const features = [
   {
     icon: Video,
-    title: 'Exclusive Content',
-    description: 'HD photos and videos updated weekly. DRM protected.'
+    title: 'The Vault',
+    description: 'Artistic visual archives. Protected and encrypted.'
   },
   {
     icon: MessageCircle,
-    title: 'Direct Messages',
-    description: 'Private conversations and personalized content requests.'
+    title: 'Inner Circle',
+    description: 'Direct access. Private conversations. Personalized connection.'
   },
   {
     icon: Crown,
-    title: 'VIP Access',
-    description: 'Early access to new content and exclusive drops.'
+    title: 'Sovereign Access',
+    description: 'Priority entry to new releases and limited drops.'
   },
   {
     icon: Lock,
-    title: 'Privacy First',
-    description: 'Discreet billing. Your privacy is protected.'
+    title: 'Zero Trace',
+    description: 'Discreet processing. Your identity protected.'
   },
   {
     icon: Zap,
-    title: 'Live Sessions',
-    description: 'Interactive live streams with real-time engagement.'
+    title: 'Live Transmissions',
+    description: 'Real-time presence. Interactive sessions.'
   },
   {
     icon: Gift,
-    title: 'Custom Orders',
-    description: 'Request personalized content made just for you.'
+    title: 'Commissioned Works',
+    description: 'Request bespoke artistic creations.'
   }
 ]
 
@@ -39,10 +39,10 @@ export function Features() {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-xs tracking-[0.3em] text-muted-foreground mb-4">
-            WHAT YOU GET
+            THE INNER WORLD
           </p>
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-            Membership Benefits
+            Patron Privileges
           </h2>
         </div>
 

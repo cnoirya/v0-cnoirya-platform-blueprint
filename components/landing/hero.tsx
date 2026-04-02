@@ -15,8 +15,8 @@ export function Hero() {
         </h1>
         
         <p className="text-sm md:text-base text-muted-foreground max-w-md mx-auto mb-10 leading-relaxed">
-          Premium adult content. Exclusive access. Direct connection. 
-          Join the inner circle.
+          A sovereign archetype. Dark feminine empire. 
+          Enter the inner world.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -34,7 +34,7 @@ export function Hero() {
         </div>
 
         <p className="mt-12 text-xs text-muted-foreground">
-          18+ Only. Age verification required.
+          Restricted access. Verification required.
         </p>
       </div>
     </section>

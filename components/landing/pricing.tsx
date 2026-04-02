@@ -4,44 +4,44 @@ import { Check } from 'lucide-react'
 
 const tiers = [
   {
-    name: 'Standard',
+    name: 'Devotee',
     price: '$14.99',
     period: '/month',
-    description: 'Essential access to exclusive content',
+    description: 'Entry to the sovereign world',
     features: [
-      'Full photo gallery access',
-      'Weekly video releases',
-      'Community access',
-      'Monthly live stream'
+      'Full visual archive access',
+      'Weekly releases',
+      'Community channels',
+      'Monthly live transmission'
     ],
     popular: false
   },
   {
-    name: 'Premium',
+    name: 'Chosen',
     price: '$29.99',
     period: '/month',
-    description: 'Enhanced access with direct connection',
+    description: 'Deeper access. Direct connection.',
     features: [
-      'Everything in Standard',
-      'Direct messaging',
-      'Early content access',
-      'Weekly live streams',
-      'Exclusive PPV discounts'
+      'Everything in Devotee',
+      'Private messaging',
+      'Priority access',
+      'Weekly transmissions',
+      'Patron-only pricing'
     ],
     popular: true
   },
   {
-    name: 'VIP',
+    name: 'Inner Circle',
     price: '$99.99',
     period: '/month',
-    description: 'Ultimate access and priority treatment',
+    description: 'The innermost layer. Full sovereignty.',
     features: [
-      'Everything in Premium',
-      'Custom content requests',
-      'Private video calls',
-      'Exclusive merchandise',
-      'NFT drops access',
-      'Priority support'
+      'Everything in Chosen',
+      'Commissioned works',
+      'Private sessions',
+      'Limited edition drops',
+      'NFT access',
+      'Priority response'
     ],
     popular: false
   }
@@ -53,13 +53,13 @@ export function Pricing() {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-xs tracking-[0.3em] text-muted-foreground mb-4">
-            MEMBERSHIP TIERS
+            ACCESS TIERS
           </p>
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4">
-            Choose Your Access Level
+            Choose Your Layer
           </h2>
           <p className="text-sm text-muted-foreground">
-            All plans include discreet billing and cancel anytime.
+            Discreet processing. Cancel anytime.
           </p>
         </div>
 

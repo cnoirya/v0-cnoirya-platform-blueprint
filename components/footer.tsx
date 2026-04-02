@@ -95,7 +95,7 @@ export function Footer() {
             CNOIRYA. All rights reserved.
           </p>
           <p className="text-xs text-muted-foreground">
-            18+ Adults Only. Age verification required.
+            Restricted access. Verification required.
           </p>
         </div>
       </div>

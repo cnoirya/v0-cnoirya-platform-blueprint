@@ -114,11 +114,11 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xs font-bold uppercase tracking-widest mb-3">10. Children&apos;s Privacy</h2>
+            <h2 className="text-xs font-bold uppercase tracking-widest mb-3">10. Age Requirements</h2>
             <p className="text-neutral-600">
-              Our platform is strictly for adults 18 years and older. We do not knowingly collect 
-              information from anyone under 18. If we discover we have collected information from 
-              a minor, we will delete it immediately.
+              Our platform requires age verification for access. We do not knowingly collect 
+              information from anyone who does not meet the age requirements. If we discover 
+              unauthorized access, we will terminate the account immediately.
             </p>
           </section>
 

@@ -98,7 +98,7 @@ export default function LoginPage() {
         </p>
 
         <p className="text-center text-xs text-muted-foreground mt-8">
-          18+ Only
+          Restricted access
         </p>
       </div>
     </main>

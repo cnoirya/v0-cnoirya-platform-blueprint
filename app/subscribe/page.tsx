@@ -9,28 +9,28 @@ import { Check, ArrowLeft } from 'lucide-react'
 
 const tiers = [
   {
-    id: 'standard',
-    name: 'Standard',
+    id: 'devotee',
+    name: 'Devotee',
     price: 14.99,
-    features: ['Full photo gallery', 'Weekly videos', 'Community access']
+    features: ['Visual archive access', 'Weekly releases', 'Community channels']
   },
   {
-    id: 'premium',
-    name: 'Premium',
+    id: 'chosen',
+    name: 'Chosen',
     price: 29.99,
-    features: ['Everything in Standard', 'Direct messaging', 'Weekly live streams']
+    features: ['Everything in Devotee', 'Private messaging', 'Weekly transmissions']
   },
   {
-    id: 'vip',
-    name: 'VIP',
+    id: 'inner-circle',
+    name: 'Inner Circle',
     price: 99.99,
-    features: ['Everything in Premium', 'Custom content', 'Private video calls']
+    features: ['Everything in Chosen', 'Commissioned works', 'Private sessions']
   }
 ]
 
 export default function SubscribePage() {
   const searchParams = useSearchParams()
-  const initialTier = searchParams.get('tier') || 'premium'
+  const initialTier = searchParams.get('tier') || 'chosen'
   const [selectedTier, setSelectedTier] = useState(initialTier)
   const [step, setStep] = useState(1)
   const [ageVerified, setAgeVerified] = useState(false)
@@ -51,7 +51,7 @@ export default function SubscribePage() {
         </Link>
 
         <div className="text-center mb-8">
-          <h1 className="text-xl font-bold tracking-tight mb-2">Subscribe to CNOIRYA</h1>
+          <h1 className="text-xl font-bold tracking-tight mb-2">Enter the Inner World</h1>
           <p className="text-xs text-muted-foreground">
             Step {step} of 3
           </p>
@@ -60,7 +60,7 @@ export default function SubscribePage() {
         {step === 1 && (
           <div className="space-y-6">
             <p className="text-xs text-muted-foreground text-center">
-              Select your membership tier
+              Select your access layer
             </p>
             
             <div className="space-y-3">
@@ -140,7 +140,7 @@ export default function SubscribePage() {
                   className="mt-0.5"
                 />
                 <span className="text-muted-foreground">
-                  I confirm I am 18 years of age or older and agree to the{' '}
+                  I confirm I meet the age requirements and agree to the{' '}
                   <Link href="/terms" className="text-foreground hover:underline">Terms of Service</Link>
                   {' '}and{' '}
                   <Link href="/privacy" className="text-foreground hover:underline">Privacy Policy</Link>.

@@ -11,22 +11,22 @@ export function CreatorCard() {
         </div>
         <div>
           <h3 className="text-sm font-bold">CNOIRYA</h3>
-          <p className="text-[10px] text-muted-foreground">Creator</p>
+          <p className="text-[10px] text-muted-foreground">Sovereign</p>
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-2 mb-4 text-center">
         <div className="p-2 border border-border">
           <p className="text-sm font-bold">842</p>
-          <p className="text-[10px] text-muted-foreground">Posts</p>
+          <p className="text-[10px] text-muted-foreground">Archives</p>
         </div>
         <div className="p-2 border border-border">
           <p className="text-sm font-bold">24K</p>
-          <p className="text-[10px] text-muted-foreground">Likes</p>
+          <p className="text-[10px] text-muted-foreground">Devotions</p>
         </div>
         <div className="p-2 border border-border">
           <p className="text-sm font-bold">5.2K</p>
-          <p className="text-[10px] text-muted-foreground">Members</p>
+          <p className="text-[10px] text-muted-foreground">Patrons</p>
         </div>
       </div>
 
