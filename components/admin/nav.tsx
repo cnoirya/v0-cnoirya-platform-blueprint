@@ -10,7 +10,12 @@ import {
   MessageCircle,
   Video,
   Settings,
-  ArrowLeft
+  ArrowLeft,
+  Phone,
+  FileText,
+  Target,
+  ShoppingBag,
+  Hexagon
 } from 'lucide-react'
 
 const navItems = [
@@ -19,6 +24,11 @@ const navItems = [
   { href: '/admin/subscribers', label: 'Subscribers', icon: Users },
   { href: '/admin/earnings', label: 'Earnings', icon: DollarSign },
   { href: '/admin/messages', label: 'Messages', icon: MessageCircle },
+  { href: '/admin/calls', label: 'Calls', icon: Phone },
+  { href: '/admin/custom', label: 'Custom Orders', icon: FileText },
+  { href: '/admin/shop', label: 'Shop', icon: ShoppingBag },
+  { href: '/admin/fundraise', label: 'Fundraise', icon: Target },
+  { href: '/admin/nft', label: 'NFTs', icon: Hexagon },
   { href: '/admin/live', label: 'Go Live', icon: Video },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ]

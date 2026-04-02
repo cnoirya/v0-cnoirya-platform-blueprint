@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Grid, MessageCircle, Video, User, Settings, LogOut } from 'lucide-react'
+import { Home, Grid, MessageCircle, Video, User, Settings, LogOut, Phone, Wallet, ShoppingBag, Hexagon, FileText, Target, Heart, Bell, Calendar, Users } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +17,19 @@ const navItems = [
   { href: '/dashboard/content', label: 'Content', icon: Grid },
   { href: '/dashboard/messages', label: 'Messages', icon: MessageCircle },
   { href: '/dashboard/live', label: 'Live', icon: Video },
+  { href: '/dashboard/calls', label: 'Calls', icon: Phone },
+]
+
+const moreItems = [
+  { href: '/dashboard/wallet', label: 'Wallet', icon: Wallet },
+  { href: '/dashboard/shop', label: 'Shop', icon: ShoppingBag },
+  { href: '/dashboard/custom', label: 'Custom', icon: FileText },
+  { href: '/dashboard/nft', label: 'NFTs', icon: Hexagon },
+  { href: '/dashboard/fundraise', label: 'Fundraise', icon: Target },
+  { href: '/dashboard/tip', label: 'Tip', icon: Heart },
+  { href: '/dashboard/schedule', label: 'Schedule', icon: Calendar },
+  { href: '/dashboard/referrals', label: 'Referrals', icon: Users },
+  { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
 ]
 
 export function DashboardNav() {
@@ -29,22 +42,39 @@ export function DashboardNav() {
           CNOIRYA
         </Link>
 
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-4">
           {navItems.map((item) => {
             const isActive = pathname === item.href
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-2 text-xs transition-colors ${
+                className={`flex items-center gap-1.5 text-xs transition-colors ${
                   isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                <item.icon className="h-4 w-4" strokeWidth={1.5} />
+                <item.icon className="h-3.5 w-3.5" strokeWidth={1.5} />
                 {item.label}
               </Link>
             )
           })}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-6 text-xs text-muted-foreground hover:text-foreground">
+                More
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center" className="w-40">
+              {moreItems.map((item) => (
+                <DropdownMenuItem key={item.href} asChild>
+                  <Link href={item.href} className="flex items-center gap-2 text-xs">
+                    <item.icon className="h-3 w-3" />
+                    {item.label}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <DropdownMenu>
