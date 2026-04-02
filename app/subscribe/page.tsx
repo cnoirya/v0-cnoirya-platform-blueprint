@@ -2,10 +2,11 @@
 
 import { useState, Suspense } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Check, ArrowLeft, Copy, CheckCircle, ExternalLink } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 const tiers = [
   {
@@ -29,12 +30,16 @@ const tiers = [
 ]
 
 function SubscribeContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const initialTier = searchParams.get('tier') || 'chosen'
   const [selectedTier, setSelectedTier] = useState(initialTier)
   const [step, setStep] = useState(1)
   const [ageVerified, setAgeVerified] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [signUpSuccess, setSignUpSuccess] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -47,6 +52,61 @@ function SubscribeContent() {
     navigator.clipboard.writeText(address)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleCreateAccount = async () => {
+    setIsLoading(true)
+    setError('')
+
+    const supabase = createClient()
+    
+    const { error: signUpError } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/dashboard`,
+        data: {
+          username: formData.username,
+          tier: selectedTier,
+        },
+      },
+    })
+
+    if (signUpError) {
+      setError(signUpError.message)
+      setIsLoading(false)
+      return
+    }
+
+    setSignUpSuccess(true)
+    setStep(3)
+    setIsLoading(false)
+  }
+
+  const handlePaymentSent = async () => {
+    setIsLoading(true)
+    
+    // Create payment record via API
+    try {
+      const response = await fetch('/api/payments/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tier: selectedTier,
+          amount: selectedPlan.price,
+          email: formData.email,
+        }),
+      })
+
+      if (response.ok) {
+        // Redirect to pending page
+        router.push('/subscribe/pending')
+      }
+    } catch {
+      setError('Failed to process. Please try again.')
+    }
+    
+    setIsLoading(false)
   }
 
   return (
@@ -63,6 +123,12 @@ function SubscribeContent() {
             Step {step} of 3
           </p>
         </div>
+
+        {error && (
+          <div className="mb-6 p-3 border border-red-200 bg-red-50 text-red-600 text-xs">
+            {error}
+          </div>
+        )}
 
         {step === 1 && (
           <div className="space-y-6">
@@ -134,7 +200,7 @@ function SubscribeContent() {
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder="Create a password"
+                  placeholder="Create a password (min 6 characters)"
                   className="text-sm"
                 />
               </div>
@@ -160,11 +226,11 @@ function SubscribeContent() {
                 Back
               </Button>
               <Button 
-                onClick={() => setStep(3)} 
+                onClick={handleCreateAccount} 
                 className="flex-1 text-sm"
-                disabled={!ageVerified || !formData.email || !formData.password || !formData.username}
+                disabled={!ageVerified || !formData.email || !formData.password || !formData.username || isLoading}
               >
-                Continue
+                {isLoading ? 'Creating...' : 'Continue'}
               </Button>
             </div>
           </div>
@@ -172,6 +238,12 @@ function SubscribeContent() {
 
         {step === 3 && (
           <div className="space-y-6">
+            {signUpSuccess && (
+              <div className="p-3 border border-green-400 bg-green-50 text-green-800 text-xs mb-4">
+                <strong>Account created!</strong> Check your email to confirm, then complete payment below.
+              </div>
+            )}
+
             <p className="text-xs text-muted-foreground text-center">
               Complete payment with USDT
             </p>
@@ -238,8 +310,8 @@ function SubscribeContent() {
               </p>
             </div>
 
-            <Button className="w-full text-sm">
-              I&apos;ve Sent Payment
+            <Button onClick={handlePaymentSent} disabled={isLoading} className="w-full text-sm">
+              {isLoading ? 'Processing...' : "I've Sent Payment"}
             </Button>
 
             <Button variant="ghost" onClick={() => setStep(2)} className="w-full text-sm">

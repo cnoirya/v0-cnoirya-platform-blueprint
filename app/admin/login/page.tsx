@@ -6,12 +6,11 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react'
-
-// CHANGE THIS PASSWORD - This is just for demo purposes
-const ADMIN_PASSWORD = 'cnoirya2024'
+import { createClient } from '@/lib/supabase/client'
 
 export default function AdminLoginPage() {
   const router = useRouter()
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -22,17 +21,30 @@ export default function AdminLoginPage() {
     setLoading(true)
     setError('')
 
-    // Simple password check - replace with proper auth later
-    if (password === ADMIN_PASSWORD) {
-      // Set a simple cookie/localStorage flag
-      localStorage.setItem('cnoirya_admin_auth', 'true')
-      localStorage.setItem('cnoirya_admin_auth_time', Date.now().toString())
-      router.push('/admin')
-    } else {
-      setError('Invalid password')
-    }
+    const supabase = createClient()
     
-    setLoading(false)
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (signInError) {
+      setError(signInError.message)
+      setLoading(false)
+      return
+    }
+
+    // Check if user is admin
+    const isAdmin = data.user?.user_metadata?.is_admin === true
+    if (!isAdmin) {
+      await supabase.auth.signOut()
+      setError('Access denied. Admin privileges required.')
+      setLoading(false)
+      return
+    }
+
+    router.push('/admin')
+    router.refresh()
   }
 
   return (
@@ -49,10 +61,22 @@ export default function AdminLoginPage() {
         <div className="border border-border p-8">
           <div className="text-center mb-8">
             <h1 className="text-lg font-bold tracking-tight">CNOIRYA</h1>
-            <p className="text-xs text-muted-foreground mt-1">Creator Admin</p>
+            <p className="text-xs text-muted-foreground mt-1">Sovereign Access</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">Email</label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@cnoirya.com"
+                className="h-10 text-sm"
+                required
+              />
+            </div>
+
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Password</label>
               <div className="relative">
@@ -60,7 +84,7 @@ export default function AdminLoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter admin password"
+                  placeholder="Enter password"
                   className="h-10 text-sm pr-10"
                   required
                 />

@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import { 
   LayoutDashboard, 
   Image as ImageIcon, 
@@ -47,10 +47,11 @@ export function AdminNav() {
   const pathname = usePathname()
   const router = useRouter()
 
-  const handleLogout = () => {
-    localStorage.removeItem('cnoirya_admin_auth')
-    localStorage.removeItem('cnoirya_admin_auth_time')
+  const handleLogout = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
     router.push('/admin/login')
+    router.refresh()
   }
 
   return (

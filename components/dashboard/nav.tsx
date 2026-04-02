@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import { Home, Grid, MessageCircle, Video, User, Settings, LogOut, Phone, Wallet, ShoppingBag, Hexagon, FileText, Target, Heart, Bell, Calendar, Users, Trophy, Megaphone, Ticket, Hash, FolderOpen, BarChart3, Eye } from 'lucide-react'
 import {
   DropdownMenu,
@@ -43,6 +44,14 @@ const moreItems = [
 
 export function DashboardNav() {
   const pathname = usePathname()
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
@@ -111,11 +120,9 @@ export function DashboardNav() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/login" className="flex items-center gap-2 text-xs text-destructive">
-                <LogOut className="h-3 w-3" />
-                Sign Out
-              </Link>
+            <DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2 text-xs text-destructive cursor-pointer">
+              <LogOut className="h-3 w-3" />
+              Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
