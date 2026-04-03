@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { 
   LayoutDashboard, 
   Image as ImageIcon, 
@@ -19,7 +19,8 @@ import {
   Calendar,
   BarChart3,
   List,
-  Zap
+  Zap,
+  LogOut
 } from 'lucide-react'
 
 const navItems = [
@@ -43,6 +44,12 @@ const navItems = [
 
 export function AdminNav() {
   const pathname = usePathname()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
+    window.location.href = '/admin-login'
+  }
 
   return (
     <>
@@ -55,13 +62,22 @@ export function AdminNav() {
             </Link>
             <span className="text-[10px] tracking-wider text-muted-foreground">ADMIN</span>
           </div>
-          <Link 
-            href="/dashboard" 
-            className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="h-3 w-3" />
-            View Site
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link 
+              href="/dashboard" 
+              className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ArrowLeft className="h-3 w-3" />
+              View Site
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <LogOut className="h-3 w-3" />
+              Logout
+            </button>
+          </div>
         </div>
       </header>
 

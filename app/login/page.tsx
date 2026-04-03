@@ -11,16 +11,36 @@ export default function LoginPage() {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    // Simulate login
-    setTimeout(() => {
+    setError('')
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error || 'Login failed')
+        setIsLoading(false)
+        return
+      }
+
       router.push('/dashboard')
-    }, 1000)
+      router.refresh()
+    } catch {
+      setError('An error occurred. Please try again.')
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -31,11 +51,17 @@ export default function LoginPage() {
             CNOIRYA
           </Link>
           <p className="text-xs text-muted-foreground mt-2">
-            Sign in to your account
+            Enter the inner world
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="text-xs text-red-600 text-center p-2 border border-red-200">
+              {error}
+            </div>
+          )}
+
           <div>
             <label htmlFor="email" className="block text-xs mb-2">
               Email
@@ -86,7 +112,7 @@ export default function LoginPage() {
           </div>
 
           <Button type="submit" className="w-full text-sm" disabled={isLoading}>
-            {isLoading ? 'Signing in...' : 'Sign In'}
+            {isLoading ? 'Entering...' : 'Enter'}
           </Button>
         </form>
 
