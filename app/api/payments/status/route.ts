@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     // If payment is confirmed, update Supabase
     if (payment.payment_status === 'finished' || payment.payment_status === 'confirmed') {
-      const supabase = await createClient()
+      const supabase = createClient()
       
       // Update payment record
       await supabase
