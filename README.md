@@ -1,35 +1,173 @@
-# v0-cnoirya-platform-blueprint
+# CNOIRYA Platform
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+A modern membership and content management platform built with Next.js 16, Supabase, and NowPayments integration. Creators can manage subscribers, monetize content, and build community with tiered access levels and cryptocurrency payments.
 
-## Built with v0
+## Features
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
+✨ **Creator Features**
+- Admin dashboard with analytics and revenue tracking
+- Content vault with multi-tier access control
+- Subscriber management and messaging
+- Pay-Per-View (PPV) and subscription monetization
+- Cryptocurrency payment processing (BTC, ETH, USDT, etc.)
+- Live streaming coordination and custom order management
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_B6WE3w0U7fdG341ZgKt4h538qLP6)
+👥 **Member Features**
+- User dashboard with subscription management
+- Access to tiered content (devotee, chosen, inner-circle)
+- Wallet system with top-up functionality
+- Direct messaging with creator
+- Like and comment on content
+- PPV purchase history
 
-## Getting Started
+## Tech Stack
 
-First, run the development server:
+- **Frontend**: Next.js 16 (React 19, TypeScript)
+- **Styling**: Tailwind CSS 4 with shadcn/ui components
+- **Database**: Supabase (PostgreSQL with RLS)
+- **Authentication**: Supabase Auth
+- **Payments**: NowPayments (cryptocurrency)
+- **Hosting**: Vercel (recommended)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+## Quick Start
+
+### Local Development
+
+1. **Clone and install**
+   ```bash
+   git clone <repository>
+   cd v0-cnoirya-platform-blueprint
+   npm install
+   ```
+
+2. **Configure environment**
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local with your Supabase and NowPayments credentials
+   ```
+
+3. **Run development server**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## Configuration
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed setup instructions including:
+- Environment variables configuration
+- Supabase database setup
+- NowPayments integration
+- Production deployment options
+- Troubleshooting guide
+
+## Project Structure
+
+```
+├── app/
+│   ├── admin/              # Admin dashboard pages
+│   ├── auth/               # Authentication pages
+│   ├── dashboard/          # Member dashboard
+│   ├── api/                # API routes and webhooks
+│   ├── about/              # Static pages
+│   ├── privacy/
+│   ├── terms/
+│   └── layout.tsx          # Root layout
+├── components/             # Reusable components
+│   ├── admin/              # Admin-specific components
+│   ├── dashboard/          # Dashboard components
+│   └── ui/                 # shadcn/ui components
+├── lib/                    # Utilities and helpers
+│   ├── supabase/           # Supabase clients
+│   └── utils.ts            # Shared utilities
+├── scripts/                # Database migrations
+└── middleware.ts           # Auth middleware
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Key Pages
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Public:**
+- `/` - Homepage
+- `/about` - About page
+- `/privacy` - Privacy policy
+- `/terms` - Terms of service
 
-## Learn More
+**Authentication:**
+- `/auth/signup` - Register account
+- `/auth/login` - Login
+- `/auth/error` - Auth errors
 
-To learn more, take a look at the following resources:
+**Member Area:**
+- `/dashboard` - Member dashboard
+- `/dashboard/messages` - Messaging
+- `/dashboard/vault` - Content access
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+**Admin Area:**
+- `/admin` - Dashboard & analytics
+- `/admin/vault` - Content management
+- `/admin/subscribers` - Subscriber list
+- `/admin/settings` - Pricing configuration
+- `/admin/messages` - Message inbox
 
-<a href="https://v0.app/chat/api/kiro/clone/cnoirya/v0-cnoirya-platform-blueprint" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
+## Database
+
+The platform uses Supabase PostgreSQL with Row Level Security (RLS). Key tables:
+- `profiles` - User accounts
+- `subscriptions` - Active subscriptions
+- `payments` - Payment history
+- `content` - Media and posts
+- `messages` - Direct messages
+- `likes` - Content interactions
+- `ppv_purchases` - Per-video sales
+
+All tables automatically sync with authentication state for security.
+
+## Payments
+
+NowPayments integration handles cryptocurrency transactions:
+- **Subscription payments** - Monthly recurring
+- **PPV purchases** - One-time content sales
+- **Tips and donations** - Custom amounts
+- **Wallet top-ups** - Pre-funded account balance
+
+Webhook callbacks automatically update subscription status and wallet balances.
+
+## Deployment
+
+### Recommended: Vercel
+
+1. Push to GitHub
+2. Import in Vercel dashboard
+3. Add environment variables
+4. Deploy with one click
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions.
+
+### Alternative: Self-hosted
+
+Any Node.js hosting service works. See [DEPLOYMENT.md](./DEPLOYMENT.md) for examples.
+
+## Development
+
+Built with v0 and updated via chat. Continue development:
+
+[Open in v0 →](https://v0.app/chat/projects/prj_B6WE3w0U7fdG341ZgKt4h538qLP6)
+
+## Documentation
+
+- [Deployment Guide](./DEPLOYMENT.md) - Setup and deployment
+- [API Reference](./DEPLOYMENT.md#api-reference) - API endpoints
+- [Security](./DEPLOYMENT.md#security-best-practices) - Best practices
+
+## Support
+
+For issues and questions:
+1. Check [DEPLOYMENT.md](./DEPLOYMENT.md) troubleshooting section
+2. Review Supabase documentation
+3. Check NowPayments integration docs
+
+## License
+
+Proprietary - CNOIRYA Platform © 2026
