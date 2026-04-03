@@ -1,40 +1,40 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ArrowRight } from 'lucide-react'
 
 export function Hero() {
   return (
     <section className="min-h-screen flex flex-col items-center justify-center px-6 pt-16">
-      <div className="max-w-2xl mx-auto text-center">
-        <p className="text-xs tracking-[0.3em] text-muted-foreground mb-6">
-          EXCLUSIVE MEMBERSHIP
+      <div className="max-w-3xl mx-auto text-center">
+        <p className="text-[10px] tracking-[0.4em] uppercase text-muted-foreground mb-8">
+          Exclusive Membership
         </p>
         
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 text-balance">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-light tracking-[-0.02em] mb-8">
           CNOIRYA
         </h1>
         
-        <p className="text-sm md:text-base text-muted-foreground max-w-md mx-auto mb-10 leading-relaxed">
+        <div className="w-16 h-px bg-foreground/20 mx-auto mb-8" />
+        
+        <p className="text-sm md:text-base text-muted-foreground max-w-md mx-auto mb-12 leading-relaxed font-light">
           A sovereign archetype. Dark feminine empire. 
           Enter the inner world.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link href="/subscribe">
-            <Button size="lg" className="text-sm min-w-[180px]">
-              Subscribe Now
-              <ArrowRight className="ml-2 h-4 w-4" />
+            <Button size="lg" className="text-xs tracking-wider uppercase min-w-[200px] h-12">
+              Subscribe
             </Button>
           </Link>
           <Link href="/preview">
-            <Button variant="outline" size="lg" className="text-sm min-w-[180px]">
-              Preview Content
+            <Button variant="outline" size="lg" className="text-xs tracking-wider uppercase min-w-[200px] h-12">
+              Preview
             </Button>
           </Link>
         </div>
 
-        <p className="mt-12 text-xs text-muted-foreground">
-          Restricted access. Verification required.
+        <p className="mt-16 text-[10px] tracking-wider uppercase text-muted-foreground">
+          Restricted access
         </p>
       </div>
     </section>
