@@ -38,7 +38,7 @@ export default function ErrorPage({
           <div className="mt-16 pt-10 border-t border-border">
             <div className="flex items-center justify-center gap-8 text-[10px] tracking-wider uppercase">
               <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">Home</Link>
-              <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">Support</Link>
+              <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">About</Link>
               <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">Privacy</Link>
             </div>
           </div>
