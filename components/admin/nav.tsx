@@ -20,12 +20,14 @@ import {
   BarChart3,
   List,
   Zap,
-  LogOut
+  LogOut,
+  Archive
 } from 'lucide-react'
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/content', label: 'Content', icon: ImageIcon },
+  { href: '/admin/vault', label: 'Vault', icon: Archive },
   { href: '/admin/subscribers', label: 'Subscribers', icon: Users },
   { href: '/admin/earnings', label: 'Earnings', icon: DollarSign },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },

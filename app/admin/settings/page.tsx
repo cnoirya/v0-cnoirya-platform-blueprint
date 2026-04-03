@@ -86,47 +86,132 @@ export default function AdminSettingsPage() {
           {/* Subscription pricing */}
           <div className="border border-border p-4 space-y-4">
             <h2 className="text-xs font-bold">Subscription Pricing</h2>
+            <p className="text-[10px] text-muted-foreground">Configure up to 3 tier levels. All currencies in crypto (BTC, ETH, etc.)</p>
             
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs mb-2">Standard</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
-                  <Input
-                    value={pricing.standard}
-                    onChange={(e) => setPricing({ ...pricing, standard: e.target.value })}
-                    type="number"
-                    className="pl-7 text-sm"
+            <div className="space-y-4">
+              {/* Standard Tier */}
+              <div className="border border-border p-3 space-y-3">
+                <div>
+                  <label className="block text-xs mb-1">Tier 1 Name</label>
+                  <Input defaultValue="Standard" className="text-xs" />
+                </div>
+                <div>
+                  <label className="block text-xs mb-1">Monthly Price</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
+                    <Input
+                      value={pricing.standard}
+                      onChange={(e) => setPricing({ ...pricing, standard: e.target.value })}
+                      type="number"
+                      className="pl-7 text-xs"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs mb-1">Description</label>
+                  <textarea
+                    placeholder="What does this tier include?"
+                    rows={2}
+                    className="w-full border border-border bg-transparent px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-ring resize-none"
                   />
                 </div>
+                <Button size="sm" variant="outline" className="text-xs">Delete Tier</Button>
               </div>
-              <div>
-                <label className="block text-xs mb-2">Premium</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
-                  <Input
-                    value={pricing.premium}
-                    onChange={(e) => setPricing({ ...pricing, premium: e.target.value })}
-                    type="number"
-                    className="pl-7 text-sm"
+
+              {/* Premium Tier */}
+              <div className="border border-border p-3 space-y-3">
+                <div>
+                  <label className="block text-xs mb-1">Tier 2 Name</label>
+                  <Input defaultValue="Premium" className="text-xs" />
+                </div>
+                <div>
+                  <label className="block text-xs mb-1">Monthly Price</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
+                    <Input
+                      value={pricing.premium}
+                      onChange={(e) => setPricing({ ...pricing, premium: e.target.value })}
+                      type="number"
+                      className="pl-7 text-xs"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs mb-1">Description</label>
+                  <textarea
+                    placeholder="What does this tier include?"
+                    rows={2}
+                    className="w-full border border-border bg-transparent px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-ring resize-none"
                   />
                 </div>
+                <Button size="sm" variant="outline" className="text-xs">Delete Tier</Button>
               </div>
-              <div>
-                <label className="block text-xs mb-2">VIP</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
-                  <Input
-                    value={pricing.vip}
-                    onChange={(e) => setPricing({ ...pricing, vip: e.target.value })}
-                    type="number"
-                    className="pl-7 text-sm"
+
+              {/* VIP Tier */}
+              <div className="border border-border p-3 space-y-3">
+                <div>
+                  <label className="block text-xs mb-1">Tier 3 Name</label>
+                  <Input defaultValue="VIP" className="text-xs" />
+                </div>
+                <div>
+                  <label className="block text-xs mb-1">Monthly Price</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
+                    <Input
+                      value={pricing.vip}
+                      onChange={(e) => setPricing({ ...pricing, vip: e.target.value })}
+                      type="number"
+                      className="pl-7 text-xs"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs mb-1">Description</label>
+                  <textarea
+                    placeholder="What does this tier include?"
+                    rows={2}
+                    className="w-full border border-border bg-transparent px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-ring resize-none"
                   />
                 </div>
+                <Button size="sm" variant="outline" className="text-xs">Delete Tier</Button>
               </div>
             </div>
 
-            <Button size="sm" className="text-xs">Update Pricing</Button>
+            <div className="flex gap-2">
+              <Button size="sm" className="text-xs">Add New Tier</Button>
+              <Button size="sm" className="text-xs">Update Pricing</Button>
+            </div>
+          </div>
+
+          {/* Multi-month bundles */}
+          <div className="border border-border p-4 space-y-4">
+            <h2 className="text-xs font-bold">Multi-Month Bundles</h2>
+            <p className="text-[10px] text-muted-foreground">Prepaid packages with volume discounts</p>
+            
+            <div className="space-y-3">
+              <div className="border border-border p-3 space-y-3">
+                <div>
+                  <label className="block text-xs mb-1">Bundle Name</label>
+                  <Input placeholder="e.g., 3-Month Yearly Pass" className="text-xs" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs mb-1">Duration (months)</label>
+                    <Input type="number" placeholder="3" className="text-xs" />
+                  </div>
+                  <div>
+                    <label className="block text-xs mb-1">Price</label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
+                      <Input type="number" placeholder="99.99" className="pl-7 text-xs" />
+                    </div>
+                  </div>
+                </div>
+                <Button size="sm" variant="outline" className="text-xs">Delete Bundle</Button>
+              </div>
+            </div>
+
+            <Button size="sm" variant="outline" className="text-xs">Add Bundle</Button>
           </div>
 
           {/* Content settings */}

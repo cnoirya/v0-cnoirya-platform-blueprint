@@ -56,40 +56,41 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-sm">
         <Link 
           href="/" 
-          className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground mb-8"
+          className="inline-flex items-center gap-2 text-[10px] tracking-wider uppercase text-muted-foreground hover:text-foreground mb-12"
         >
-          <ArrowLeft className="w-3 h-3" />
+          <ArrowLeft className="w-3 h-3" strokeWidth={1} />
           Back to site
         </Link>
 
-        <div className="border border-border p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-lg font-bold tracking-tight">CNOIRYA</h1>
-            <p className="text-xs text-muted-foreground mt-1">Sovereign Access</p>
+        <div className="border border-border p-10">
+          <div className="text-center mb-10">
+            <h1 className="text-sm tracking-[0.1em] font-light">CNOIRYA</h1>
+            <div className="w-8 h-px bg-foreground/20 mx-auto mt-4 mb-4" />
+            <p className="text-[10px] tracking-wider uppercase text-muted-foreground">Sovereign Access</p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Email</label>
+              <label className="text-[10px] tracking-wider uppercase text-muted-foreground mb-2 block">Email</label>
               <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@cnoirya.com"
-                className="h-10 text-sm"
+                className="h-11 text-sm border-foreground/20 focus:border-foreground"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Password</label>
+              <label className="text-[10px] tracking-wider uppercase text-muted-foreground mb-2 block">Password</label>
               <div className="relative">
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter password"
-                  className="h-10 text-sm pr-10"
+                  className="h-11 text-sm pr-10 border-foreground/20 focus:border-foreground"
                   required
                 />
                 <button
@@ -97,25 +98,34 @@ export default function AdminLoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? <EyeOff className="w-4 h-4" strokeWidth={1} /> : <Eye className="w-4 h-4" strokeWidth={1} />}
                 </button>
               </div>
             </div>
 
             {error && (
-              <p className="text-xs text-red-600">{error}</p>
+              <p className="text-[10px] text-red-600">{error}</p>
             )}
+
+            <div className="flex justify-end">
+              <Link 
+                href="/forgot-password" 
+                className="text-[10px] tracking-wide text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Forgot password?
+              </Link>
+            </div>
 
             <Button 
               type="submit" 
-              className="w-full bg-foreground text-background hover:bg-foreground/90 text-sm"
+              className="w-full bg-foreground text-background hover:bg-foreground/90 text-xs h-11 tracking-wider uppercase"
               disabled={loading}
             >
               {loading ? 'Authenticating...' : 'Access Admin Panel'}
             </Button>
           </form>
 
-          <p className="text-[10px] text-muted-foreground text-center mt-6">
+          <p className="text-[10px] text-muted-foreground text-center mt-8 tracking-wider uppercase">
             Sovereign access only
           </p>
         </div>

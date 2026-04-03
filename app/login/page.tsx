@@ -46,24 +46,25 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen bg-background flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <Link href="/" className="text-lg tracking-tight">
+        <div className="text-center mb-12">
+          <Link href="/" className="text-sm tracking-[0.1em] font-light">
             CNOIRYA
           </Link>
-          <p className="text-xs text-muted-foreground mt-2">
+          <div className="w-8 h-px bg-foreground/20 mx-auto mt-4 mb-4" />
+          <p className="text-[10px] tracking-wider uppercase text-muted-foreground">
             Enter the inner world
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {error && (
-            <div className="text-xs text-red-600 text-center p-2 border border-red-200">
+            <div className="text-[10px] text-red-600 border border-red-200 p-3">
               {error}
             </div>
           )}
 
           <div>
-            <label htmlFor="email" className="block text-xs mb-2">
+            <label htmlFor="email" className="block text-[10px] tracking-wider uppercase text-muted-foreground mb-2">
               Email
             </label>
             <Input
@@ -73,12 +74,12 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
-              className="text-sm"
+              className="text-sm h-11 border-foreground/20 focus:border-foreground"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-xs mb-2">
+            <label htmlFor="password" className="block text-[10px] tracking-wider uppercase text-muted-foreground mb-2">
               Password
             </label>
             <div className="relative">
@@ -89,41 +90,41 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
-                className="text-sm pr-10"
+                className="text-sm h-11 pr-10 border-foreground/20 focus:border-foreground"
               />
               <button
                 type="button"
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showPassword ? <EyeOff className="h-4 w-4" strokeWidth={1} /> : <Eye className="h-4 w-4" strokeWidth={1} />}
               </button>
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-xs">
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="rounded border-border" />
-              <span className="text-muted-foreground">Remember me</span>
+          <div className="flex items-center justify-between text-[10px]">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" className="w-3 h-3 border border-foreground/30 bg-transparent" />
+              <span className="text-muted-foreground tracking-wide">Remember me</span>
             </label>
-            <Link href="/forgot-password" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/forgot-password" className="text-muted-foreground hover:text-foreground transition-colors tracking-wide">
               Forgot password?
             </Link>
           </div>
 
-          <Button type="submit" className="w-full text-sm" disabled={isLoading}>
+          <Button type="submit" className="w-full text-xs h-11 tracking-wider uppercase" disabled={isLoading}>
             {isLoading ? 'Entering...' : 'Enter'}
           </Button>
         </form>
 
-        <p className="text-center text-xs text-muted-foreground mt-6">
+        <p className="text-center text-[10px] text-muted-foreground mt-10 tracking-wide">
           Don&apos;t have an account?{' '}
           <Link href="/subscribe" className="text-foreground hover:underline">
             Subscribe
           </Link>
         </p>
 
-        <p className="text-center text-xs text-muted-foreground mt-8">
+        <p className="text-center text-[10px] text-muted-foreground mt-12 tracking-wider uppercase">
           Restricted access
         </p>
       </div>
