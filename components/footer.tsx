@@ -51,6 +51,11 @@ export function Footer() {
             <h4 className="text-xs font-bold mb-4">Legal</h4>
             <ul className="space-y-2">
               <li>
+                <Link href="/about" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+                  About
+                </Link>
+              </li>
+              <li>
                 <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                   Terms
                 </Link>
@@ -58,11 +63,6 @@ export function Footer() {
               <li>
                 <Link href="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                   Privacy
-                </Link>
-              </li>
-              <li>
-                <Link href="/2257" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-                  18 USC 2257
                 </Link>
               </li>
             </ul>

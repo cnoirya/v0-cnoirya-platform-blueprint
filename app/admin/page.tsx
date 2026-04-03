@@ -1,4 +1,5 @@
-import { TrendingUp, TrendingDown, Users, DollarSign, Eye, MessageCircle } from 'lucide-react'
+import { TrendingUp, TrendingDown, Users, DollarSign, Eye, MessageCircle, Lock, FileUp } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const stats = [
   { 
@@ -46,11 +47,27 @@ const topContent = [
   { title: 'BTS Video', views: 6721, likes: 512, earnings: '$847' },
 ]
 
+const upcomingTasks = [
+  { label: 'Live Transmission', date: 'Today 8PM', priority: 'high' },
+  { label: 'Content Approval Pending', count: 3, priority: 'medium' },
+  { label: 'Payout Settlement', date: 'Apr 15', priority: 'medium' },
+  { label: 'Subscriber Churn Alert', count: 12, priority: 'low' }
+]
+
 export default function AdminDashboardPage() {
   return (
     <div className="p-6 pb-24 lg:pb-6">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-sm font-bold mb-6">Dashboard</h1>
+        <div className="flex items-start justify-between mb-8">
+          <div>
+            <h1 className="text-sm font-bold mb-1">Dashboard</h1>
+            <p className="text-[10px] text-muted-foreground">April 2026 • 30 days overview</p>
+          </div>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" className="text-xs">Export Report</Button>
+            <Button size="sm" className="text-xs">Quick Upload</Button>
+          </div>
+        </div>
 
         {/* Stats grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -71,30 +88,30 @@ export default function AdminDashboardPage() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Recent activity */}
           <div className="border border-border p-4">
             <h2 className="text-xs font-bold mb-4">Recent Activity</h2>
             <div className="space-y-3">
               {recentActivity.map((activity, i) => (
-                <div key={i} className="flex items-center justify-between text-xs">
+                <div key={i} className="flex items-center justify-between text-xs border-b border-border pb-3 last:border-0">
                   <div className="flex items-center gap-3">
-                    <span className={`w-16 text-[10px] tracking-wider uppercase ${
+                    <span className={`w-14 text-[10px] tracking-wider uppercase font-bold ${
                       activity.type === 'subscription' ? 'text-foreground' :
                       activity.type === 'tip' ? 'text-foreground' :
                       'text-muted-foreground'
                     }`}>
                       {activity.type}
                     </span>
-                    <span className="text-muted-foreground">{activity.user}</span>
+                    <span className="text-muted-foreground truncate">{activity.user}</span>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="font-bold">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-right">
                       {'tier' in activity ? activity.tier : 
                        'amount' in activity ? activity.amount : 
                        'content' in activity ? activity.content : ''}
                     </span>
-                    <span className="text-[10px] text-muted-foreground">{activity.time}</span>
+                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">{activity.time}</span>
                   </div>
                 </div>
               ))}
@@ -103,19 +120,41 @@ export default function AdminDashboardPage() {
 
           {/* Top content */}
           <div className="border border-border p-4">
-            <h2 className="text-xs font-bold mb-4">Top Content (This Month)</h2>
+            <h2 className="text-xs font-bold mb-4">Top Content</h2>
             <div className="space-y-3">
               {topContent.map((content, i) => (
-                <div key={i} className="flex items-center justify-between text-xs">
+                <div key={i} className="flex items-center justify-between text-xs border-b border-border pb-3 last:border-0">
                   <div className="flex items-center gap-3">
-                    <span className="w-5 h-5 bg-secondary flex items-center justify-center text-[10px]">
+                    <span className="w-5 h-5 bg-secondary flex items-center justify-center text-[10px] font-bold">
                       {i + 1}
                     </span>
-                    <span>{content.title}</span>
+                    <span className="truncate">{content.title}</span>
                   </div>
-                  <div className="flex items-center gap-4 text-muted-foreground">
-                    <span>{content.views} views</span>
-                    <span className="font-bold text-foreground">{content.earnings}</span>
+                  <div className="flex items-center gap-3 text-muted-foreground">
+                    <span className="text-[10px]">{content.views} views</span>
+                    <span className="font-bold text-foreground whitespace-nowrap">{content.earnings}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Upcoming tasks */}
+          <div className="border border-border p-4">
+            <h2 className="text-xs font-bold mb-4">Upcoming</h2>
+            <div className="space-y-3">
+              {upcomingTasks.map((task, i) => (
+                <div key={i} className="flex items-start gap-3 border-b border-border pb-3 last:border-0">
+                  <div className={`w-2 h-2 rounded-full mt-1 shrink-0 ${
+                    task.priority === 'high' ? 'bg-foreground' :
+                    task.priority === 'medium' ? 'bg-foreground/60' :
+                    'bg-foreground/30'
+                  }`} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold truncate">{task.label}</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      {'date' in task ? task.date : `${task.count} pending`}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -123,8 +162,8 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Revenue chart placeholder */}
-        <div className="border border-border p-4 mt-6">
+        {/* Revenue chart */}
+        <div className="border border-border p-4">
           <h2 className="text-xs font-bold mb-4">Revenue (Last 30 Days)</h2>
           <div className="h-48 flex items-end justify-between gap-1">
             {Array.from({ length: 30 }, (_, i) => {
@@ -132,14 +171,16 @@ export default function AdminDashboardPage() {
               return (
                 <div
                   key={i}
-                  className="flex-1 bg-foreground/20 hover:bg-foreground/40 transition-colors"
+                  className="flex-1 bg-foreground/20 hover:bg-foreground/40 transition-colors rounded-t cursor-pointer"
                   style={{ height: `${height}%` }}
+                  title={`Day ${i + 1}`}
                 />
               )
             })}
           </div>
-          <div className="flex items-center justify-between mt-2 text-[10px] text-muted-foreground">
+          <div className="flex items-center justify-between mt-4 text-[10px] text-muted-foreground">
             <span>Mar 3</span>
+            <span className="font-bold text-foreground">$24,847 total</span>
             <span>Apr 2</span>
           </div>
         </div>
